@@ -38,7 +38,6 @@ export const useDataStore = defineStore('data', {
       })
       return arrayOfProducts[0]
     },
-
     FilteredDataByStoreAndProduct() {
       const arrayOfAllProductRecommended: RecommendationsObjectType[] = this.recommendations.filter(
         (recommendation) => {
@@ -67,6 +66,7 @@ export const useDataStore = defineStore('data', {
 
       return { arrayOfAllProductDelivered, arrayOfAllProductRecommended, arrayOfAllProductSales }
     },
+
     getTotalDataByProduct() {
       const { arrayOfAllProductDelivered, arrayOfAllProductRecommended, arrayOfAllProductSales } =
         this.FilteredDataByStoreAndProduct
@@ -97,6 +97,7 @@ export const useDataStore = defineStore('data', {
         totalProductDemand
       }
     },
+    //todo ===== find a way to run this function on every product at the same time
     getDataByStore() {
       const croissantData = this.getTotalDataByProduct
       return croissantData
