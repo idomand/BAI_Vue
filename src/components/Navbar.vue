@@ -8,6 +8,15 @@
     >
       {{ store.store_label }}
     </v-btn>
+    <hr />
+    <v-btn
+      @click="dataStore.changeProduct(product.id_product)"
+      v-for="product in dataStore.products"
+      :key="product.id_product"
+      variant="outlined"
+    >
+      {{ product.name_product }}
+    </v-btn>
   </v-navigation-drawer>
 </template>
 
