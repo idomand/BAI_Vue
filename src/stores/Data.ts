@@ -97,23 +97,24 @@ export const useDataStore = defineStore('data', {
         totalProductDemand
       }
     },
+    // todo -- THIS CODE IS NOT WORKING
+    // getAllDataPerStore2() {
+    //   this.changeProduct(this.products[0].id_product)
+    //   const totalCroissantData = this.getTotalDataByProduct
+    //   this.changeProduct(this.products[1].id_product)
+    //   const totalBlackBreadData = this.getTotalDataByProduct
+    //   this.changeProduct(this.products[2].id_product)
+    //   const totalDanishPastryData = this.getTotalDataByProduct
+    //   this.changeProduct(this.products[3].id_product)
+    //   const totalGrainRollData = this.getTotalDataByProduct
+
+    //   return { totalCroissantData, totalBlackBreadData, totalDanishPastryData, totalGrainRollData }
+    // },
+
     //todo ===== find a way to run this function on every product at the same time
     getDataByStore() {
       const croissantData = this.getTotalDataByProduct
       return croissantData
-      //   const {
-      //     totalProductRecommended: totalCroissantRecommended,
-      //     totalProductDelivered: totalCroissantDelivered,
-      //     totalProductDemand: totalCroissantDemand,
-      //     totalProductSales: totalCroissantSales
-      //   } = this.getTotalDataByProduct
-      //   const croissantData = {
-      //     totalCroissantDelivered,
-      //     totalCroissantRecommended,
-      //     totalCroissantDemand,
-      //     totalCroissantSales
-      //   }
-      //   return { croissantData }
     }
   },
   actions: {
@@ -122,6 +123,18 @@ export const useDataStore = defineStore('data', {
     },
     changeProduct(newProductId: number) {
       this.productIdToShow = newProductId
+    },
+    getAllDataPerStore() {
+      this.changeProduct(this.products[0].id_product)
+      const totalCroissantData = this.getTotalDataByProduct
+      this.changeProduct(this.products[1].id_product)
+      const totalBlackBreadData = this.getTotalDataByProduct
+      this.changeProduct(this.products[2].id_product)
+      const totalDanishPastryData = this.getTotalDataByProduct
+      this.changeProduct(this.products[3].id_product)
+      const totalGrainRollData = this.getTotalDataByProduct
+
+      return { totalCroissantData, totalBlackBreadData, totalDanishPastryData, totalGrainRollData }
     }
   }
 })
