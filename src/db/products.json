@@ -11,7 +11,7 @@
     "number_product": 12,
     "price": 0.75
   },
-  {
+    {
     "id_product": 100700080,
     "name_product": "Danish pastry",
     "number_product": 452,
@@ -23,4 +23,6 @@
     "number_product": 202,
     "price": 0.9
   }
+
+
 ]

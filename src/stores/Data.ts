@@ -36,16 +36,15 @@ export const useDataStore = defineStore('data', {
       const arrayOfProducts: ProductsObjectType[] = this.products.filter((product) => {
         return product.id_product == this.productIdToShow
       })
+      console.log('arrayOfProducts[0]', arrayOfProducts[0].name_product)
       return arrayOfProducts[0]
     },
+
     FilteredDataByStoreAndProduct() {
       const arrayOfAllProductRecommended: RecommendationsObjectType[] = this.recommendations.filter(
-        (recommendation) => {
-          return (
-            recommendation.id_store == this.storeIdToShow &&
-            recommendation.id_product == this.productIdToShow
-          )
-        }
+        (recommendation) =>
+          recommendation.id_store == this.storeIdToShow &&
+          recommendation.id_product == this.productIdToShow
       )
 
       const arrayOfAllProductDelivered: DeliveriesObjectType[] = this.deliveries.filter(
@@ -57,12 +56,11 @@ export const useDataStore = defineStore('data', {
         }
       )
 
-      const arrayOfAllProductSales: SalesObjectType[] = this.sales.filter((recommendation) => {
-        return (
+      const arrayOfAllProductSales: SalesObjectType[] = this.sales.filter(
+        (recommendation) =>
           recommendation.id_store == this.storeIdToShow &&
           recommendation.id_product == this.productIdToShow
-        )
-      })
+      )
 
       return { arrayOfAllProductDelivered, arrayOfAllProductRecommended, arrayOfAllProductSales }
     },
@@ -97,24 +95,115 @@ export const useDataStore = defineStore('data', {
         totalProductDemand
       }
     },
-    // todo -- THIS CODE IS NOT WORKING
-    // getAllDataPerStore2() {
-    //   this.changeProduct(this.products[0].id_product)
-    //   const totalCroissantData = this.getTotalDataByProduct
-    //   this.changeProduct(this.products[1].id_product)
-    //   const totalBlackBreadData = this.getTotalDataByProduct
-    //   this.changeProduct(this.products[2].id_product)
-    //   const totalDanishPastryData = this.getTotalDataByProduct
-    //   this.changeProduct(this.products[3].id_product)
-    //   const totalGrainRollData = this.getTotalDataByProduct
 
-    //   return { totalCroissantData, totalBlackBreadData, totalDanishPastryData, totalGrainRollData }
-    // },
+    getInsightsByProduct() {
+      const { arrayOfAllProductDelivered, arrayOfAllProductRecommended, arrayOfAllProductSales } =
+        this.FilteredDataByStoreAndProduct
 
-    //todo ===== find a way to run this function on every product at the same time
-    getDataByStore() {
-      const croissantData = this.getTotalDataByProduct
-      return croissantData
+      // console.log(this.productToShow.name_product)
+      // console.log(this.storeToShow.store_label)
+
+      type MergedData = {
+        target_date: string
+        id_store: number
+        id_product: number
+        recommendation: number
+        delivery_qty: number
+        sales_qty: number
+        demand_qty: number
+      }
+
+      function combineArrays(
+        array1: DeliveriesObjectType[],
+        array2: RecommendationsObjectType[],
+        array3: SalesObjectType[]
+      ): MergedData[] {
+        const map = new Map<string, MergedData>()
+
+        for (const item of array1) {
+          const key = `${item.target_date}_${item.id_store}_${item.id_product}`
+          if (!map.has(key)) {
+            map.set(key, {
+              target_date: item.target_date,
+              id_store: item.id_store,
+              id_product: item.id_product,
+              recommendation: 0,
+              sales_qty: 0,
+              demand_qty: 0,
+              delivery_qty: item.delivery_qty
+            })
+          } else {
+            const existingItem = map.get(key)!
+            existingItem.delivery_qty += item.delivery_qty
+          }
+        }
+
+        for (const item of array2) {
+          const key = `${item.target_date}_${item.id_store}_${item.id_product}`
+          if (map.has(key)) {
+            const existingItem = map.get(key)!
+            existingItem.recommendation = item.recommendation
+          }
+        }
+        for (const item of array3) {
+          const key = `${item.target_date}_${item.id_store}_${item.id_product}`
+          if (map.has(key)) {
+            const existingItem = map.get(key)!
+            existingItem.demand_qty = item.demand_qty
+            existingItem.sales_qty = item.sales_qty
+          }
+        }
+        const resultArray = [...map.values()]
+
+        return resultArray
+      }
+
+      const mergeData = combineArrays(
+        arrayOfAllProductDelivered,
+        arrayOfAllProductRecommended,
+        arrayOfAllProductSales
+      )
+
+      const formattedMergedData = mergeData.map((element) => {
+        const [, month, day] = element.target_date.split('-')
+        const newDate = `${day}-${month}`
+        element.target_date = newDate
+        return element
+      })
+
+      type InsightArray = MergedData & {
+        variance: number
+        IsBadRecommendation: boolean
+      }
+
+      function checkIfRecommendationIsBad(
+        recommendation: number,
+        demand_qty: number,
+        delivery_qty: number
+      ) {
+        let IsBadRecommendation
+        const diffToRecommendation = Math.abs(demand_qty - recommendation)
+        const diffToDeliveryQty = Math.abs(demand_qty - delivery_qty)
+        if (diffToRecommendation <= diffToDeliveryQty) {
+          IsBadRecommendation = false
+        } else {
+          IsBadRecommendation = true
+        }
+        return IsBadRecommendation
+      }
+
+      const newArray: InsightArray[] = formattedMergedData.map((element: any) => {
+        element.variance = Math.abs(element.recommendation - element.delivery_qty)
+
+        element.IsBadRecommendation = checkIfRecommendationIsBad(
+          element.recommendation,
+          element.demand_qty,
+          element.delivery_qty
+        )
+        return element
+      })
+
+      return newArray
     }
   },
   actions: {
@@ -125,6 +214,7 @@ export const useDataStore = defineStore('data', {
       this.productIdToShow = newProductId
     },
     getAllDataPerStore() {
+      const currentProduct = this.productIdToShow
       this.changeProduct(this.products[0].id_product)
       const totalCroissantData = this.getTotalDataByProduct
       this.changeProduct(this.products[1].id_product)
@@ -133,7 +223,7 @@ export const useDataStore = defineStore('data', {
       const totalDanishPastryData = this.getTotalDataByProduct
       this.changeProduct(this.products[3].id_product)
       const totalGrainRollData = this.getTotalDataByProduct
-
+      this.changeProduct(currentProduct)
       return { totalCroissantData, totalBlackBreadData, totalDanishPastryData, totalGrainRollData }
     }
   }

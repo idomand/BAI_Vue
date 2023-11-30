@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import { useDataStore } from '../stores/Data'
-
 const dataStore = useDataStore()
 </script>
 
