@@ -1,12 +1,7 @@
 <template>
-  <div>InsightsGraph</div>
+  <p>InsightsGraph</p>
   <div>
-    <span>{{ dataStore.storeToShow.store_label }} </span> --
-    <span> {{ dataStore.productToShow.name_product }}</span>
-  </div>
-
-  <div>
-    <div ref="exampleChart" style="width: 1000px; height: 500px"></div>
+    <div ref="insightsChart" style="width: 500px; height: 300px"></div>
   </div>
 </template>
 
@@ -19,29 +14,46 @@ const dataStore = useDataStore()
 
 const InsightsData = computed(() => dataStore.getInsightsByProduct)
 
-const exampleChart = ref(null)
+const insightsChart = ref(null)
 
 const setOptions = (chart: echarts.ECharts) => {
   const option = {
     xAxis: {
       type: 'category',
-      data: InsightsData.value.map((element) => element.target_date)
+      data: InsightsData.value.map((element) => element.target_date),
+      name: 'Date',
+      tooltip: true
     },
     yAxis: {
-      type: 'value'
+      type: 'value',
+      name: 'Difference'
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    legend: {
+      data: ['Difference']
     },
     series: [
       {
-        data: InsightsData.value.map((element) => element.variance),
-        type: 'line'
+        data: InsightsData.value.map((element) => {
+          return {
+            value: element.variance,
+            itemStyle: {
+              color: element.IsBadRecommendation ? 'red' : 'green'
+            }
+          }
+        }),
+        type: 'bar',
+        name: 'Difference'
       }
     ]
   }
+
   option && chart.setOption(option)
 }
-
 const initChart = () => {
-  const myChart = echarts.init(exampleChart.value)
+  const myChart = echarts.init(insightsChart.value)
   setOptions(myChart)
   return myChart
 }

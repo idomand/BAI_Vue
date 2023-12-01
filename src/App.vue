@@ -5,6 +5,7 @@
     <v-main class="d-flex flex-column align-center justify-center" style="min-height: 300px">
       <Dashboard />
       <InsightsGraph />
+      <RawDataGraph />
     </v-main>
   </v-layout>
 </template>
@@ -13,6 +14,7 @@
 import Dashboard from './components/Dashboard.vue'
 import Navbar from './components/Navbar.vue'
 import InsightsGraph from './components/InsightsGraph.vue'
+import RawDataGraph from './components/RawDataGraph.vue'
 </script>
 
 <style scoped></style>

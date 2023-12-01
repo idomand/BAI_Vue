@@ -1,7 +1,9 @@
 <template>
   <section class="header-section">
-    <h1 class="header-title">Dashboard -</h1>
-    <h2>{{ dataStore.storeToShow.store_label }} - {{ dataStore.productToShow.name_product }}</h2>
+    <h3>
+      Dashboard -{{ dataStore.storeToShow.store_label }} -
+      {{ dataStore.productToShow.name_product }}
+    </h3>
     <div class="d-flex">
       <CardList />
     </div>
@@ -9,7 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { useDataStore } from '../stores/Data'
 import CardList from './CardList.vue'
 const dataStore = useDataStore()
