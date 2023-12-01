@@ -294,6 +294,7 @@ export const useDataStore = defineStore('data', {
       this.changeProduct(this.products[3].id_product)
       const totalGrainRollData = this.getTotalDataByProduct
       this.changeProduct(currentProduct)
+
       return { totalCroissantData, totalBlackBreadData, totalDanishPastryData, totalGrainRollData }
     }
   }

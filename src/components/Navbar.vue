@@ -1,22 +1,16 @@
 <template>
-  <v-navigation-drawer>
+  <v-navigation-drawer class="">
     <v-btn
       @click="dataStore.changeStore(store.id_store)"
       v-for="store in dataStore.stores"
       :key="store.id_store"
       variant="tonal"
+      :active="store.id_store == dataStore.storeIdToShow"
+      class="d-flex flex-column align-center justify-center mx-auto my-3 w-75"
     >
       {{ store.store_label }}
     </v-btn>
     <hr />
-    <v-btn
-      @click="dataStore.changeProduct(product.id_product)"
-      v-for="product in dataStore.products"
-      :key="product.id_product"
-      variant="outlined"
-    >
-      {{ product.name_product }}
-    </v-btn>
   </v-navigation-drawer>
 </template>
 

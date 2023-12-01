@@ -1,5 +1,6 @@
 <template>
   <p>InsightsGraph</p>
+
   <div>
     <div ref="insightsChart" style="width: 500px; height: 300px"></div>
   </div>
@@ -17,6 +18,12 @@ const InsightsData = computed(() => dataStore.getInsightsByProduct)
 const insightsChart = ref(null)
 
 const setOptions = (chart: echarts.ECharts) => {
+  function getMax() {
+    const arrayOfVariance = InsightsData.value.map((element) => element.variance)
+    let maxValue = Math.max(...arrayOfVariance)
+    return maxValue
+  }
+
   const option = {
     xAxis: {
       type: 'category',
@@ -26,7 +33,8 @@ const setOptions = (chart: echarts.ECharts) => {
     },
     yAxis: {
       type: 'value',
-      name: 'Difference'
+      name: 'Difference',
+      max: Math.round(getMax() * 1.25)
     },
     tooltip: {
       trigger: 'axis'
