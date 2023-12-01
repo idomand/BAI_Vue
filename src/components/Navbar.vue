@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer class="">
+  <v-navigation-drawer>
     <v-btn
       @click="dataStore.changeStore(store.id_store)"
       v-for="store in dataStore.stores"
